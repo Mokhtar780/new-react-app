@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+// استخدام المكتبة الصحيحة لبيئة الويب واستيراد خطاف التنقل
+import { useNavigate } from "react-router-dom"; 
 
 // --- الواجهات (Interfaces) ---
 export interface Dimensions {
@@ -73,7 +75,6 @@ export function Welcome() {
       });
   }, []);
 
-  // إذا كانت البيانات تحت التحميل
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen font-bold text-fuchsia-500">
@@ -82,7 +83,6 @@ export function Welcome() {
     );
   }
 
-  // إذا لم تكن هناك منتجات
   if (!data?.products || data.products.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen font-bold text-red-500">
@@ -104,10 +104,11 @@ export function Welcome() {
   );
 }
 
-// --- مكوّن بطاقة المنتج المستقل (لحفظ حالة كل منتج على حدة) ---
+// --- مكوّن بطاقة المنتج المستقل ---
 function ProductCard({ product }: { product: Product }) {
-  // هنا كل منتج يملك صورتة الخاصة المعروضة ولا تتأثر المنتجات الأخرى بالضغط
   const [imageShow, setImageShow] = useState<string>(product.thumbnail);
+  // استدعاء دالة التنقل البرمجية بشكل صحيح
+  const navigate = useNavigate(); 
 
   return (
     <li className="border border-fuchsia-300 rounded-2xl p-3 transition-all duration-400 hover:shadow-lg hover:shadow-fuchsia-500 max-w-[500px] flex flex-col justify-between">
@@ -133,7 +134,9 @@ function ProductCard({ product }: { product: Product }) {
             <button
               type="button"
               onClick={() => setImageShow(imgUrl)}
-              className={`max-w-24 max-h-24 p-0.5 rounded-xl transition-all ${imageShow === imgUrl ? "outline outline-2 outline-fuchsia-500" : "outline outline-fuchsia-500/60 hover:opacity-500/0"
+              className={`max-w-24 max-h-24 p-0.5 rounded-xl transition-all ${imageShow === imgUrl
+                  ? "outline outline-2 outline-fuchsia-500"
+                  : "outline outline-1 outline-fuchsia-500/60 hover:opacity-80"
                 }`}
               key={`${product.id}-img-${index}`}
             >
@@ -147,10 +150,12 @@ function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* زر التفاصيل */}
+      {/* زر التفاصيل بعد التعديل البرمجي الصحيح */}
       <button
         type="button"
         className="w-full bg-fuchsia-500 hover:bg-fuchsia-600 transition-colors p-2 rounded-xl text-sm font-bold text-white text-center mt-3"
+        // الانتقال إلى رابط تفاصيل المنتج ممرراً معرّف المنتج الفريد (ID) الديناميكي
+        onClick={() => navigate(`/app/welcome/details/${product.id}`)}
       >
         التفاصيل
       </button>
